@@ -10,7 +10,8 @@ import {
 import gridBuilder, { GridBuilderResult, PolyPoint } from './gridBuilder'
 import Grid from './Grid'
 import gridBuilder3 from './gridBuilder3'
-import {getNavMesh} from './NavMeshBuilder'
+import { getNavMesh as navMeshBuilder } from './NavMeshBuilder'
+// import { getNavMesh2 as navMeshBuilder } from './NavMeshBuilder'
 
 import { GRID_SIZE, OBSTACLE_RATE } from './constants'
 
@@ -26,6 +27,7 @@ export default function App() {
   const [builder2, setBuilder2] = React.useState<GridBuilderResult>()
 
   const [path, setPath] = React.useState<PolyPoint[]>([])
+  const [pathElapsed, setPathElapsed] = React.useState(0)
 
   const buildGrids = React.useCallback(() => {
     setBuilder1(quickGridBuilderBenchmark(grid, gridBuilder, 100))
@@ -55,14 +57,20 @@ export default function App() {
 
   React.useEffect(() => {
     if (!builder1?.polys) return
-    setPath(getNavMesh(builder1?.polys, {x:1,y:1}, {x:GRID_SIZE - 2,  y: GRID_SIZE - 2}))
-    // setPath(getNavMesh2(builder1?.polys, [1,1], [GRID_SIZE - 1,  GRID_SIZE - 1]))
-  }, [builder1, setPath])
 
-  React.useEffect(() => {
-    if (!path) return
-    console.log(path.map(pt => `${pt.x},${pt.y}`).join('   '))
-  }, [path])
+    const iterations = 100
+    let path: PolyPoint[] = []
+    const start = new Date().getTime()
+
+    for (let i = 0; i < iterations; ++i) {
+      path = navMeshBuilder(builder1?.polys, {x:1,y:1}, {x:GRID_SIZE - 2,  y: GRID_SIZE - 2})
+    }
+
+    setPathElapsed((new Date().getTime() - start)/iterations)
+
+    setPath(path)
+
+  }, [builder1, setPath, setPathElapsed])
 
   return (
     <div className="App">
@@ -85,7 +93,7 @@ export default function App() {
       </div>
     </div>
         {/* <PolyGrid builderResult={builder2} colourMap={cMap} algoName="Builder 3" /> */}
-        <PolyGrid builderResult={builder1} colourMap={cMap} path={path} algoName="Builder 1" />
+        <PolyGrid builderResult={builder1} colourMap={cMap} path={path} pathElapsed={pathElapsed} algoName="Builder 1" />
       </div>
     </div>
   )

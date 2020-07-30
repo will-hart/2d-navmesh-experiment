@@ -10,7 +10,11 @@ const polyMapper = (poly: Poly): PolyPoint[] => [
   { x: poly.x, y: poly.y + poly.height },
 ]
 
-export const getNavMesh = (polys: Poly[], from: PolyPoint, to: PolyPoint) => {
+export const getNavMesh = (
+  polys: Poly[],
+  from: PolyPoint,
+  to: PolyPoint,
+): PolyPoint[] => {
   const mesh = polys.map(polyMapper)
   const navMesh = new NavMesh(mesh)
   return navMesh.findPath(from, to)
@@ -25,10 +29,10 @@ const polyMapper2 = (poly: Poly): PolyArrayPoint[] => [
 
 export const getNavMesh2 = (
   polys: Poly[],
-  from: PolyArrayPoint,
-  to: PolyArrayPoint,
-) => {
+  from: PolyPoint,
+  to: PolyPoint,
+): PolyPoint[] => {
   const mesh = polys.map(polyMapper2)
   const navMesh = new NavMesh2(mesh)
-  return navMesh.findPath(from, to)
+  return navMesh.findPath([from.x, from.y], [to.x, to.y])
 }
