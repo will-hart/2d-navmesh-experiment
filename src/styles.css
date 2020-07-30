@@ -1,0 +1,44 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.button-wrapper button {
+  margin-right: 1em;
+}
+
+.grid {
+  margin: 1em 0 1em 1em;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.grid-cell {
+  border: 1px solid #eee;
+  background: none;
+  width: 16px;
+  height: 16px;
+
+  font-size: 0.6em;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-cell.open {
+  color: rgba(50, 150, 50, 0.5);
+  /* background: rgba(50, 150, 50, 0.3); */
+}
+
+.grid-cell.closed {
+  color: rgba(50, 50, 50, 0.5);
+  /* background: rgba(50, 50, 50, 0.3); */
+}
