@@ -16,4 +16,8 @@ of 0.5
 
 ![Mesh navigation example](public/mesh_navigation_example.png)
 
+Here is a (quickly) hand drawn grid which may represent a more likely use case.
+
+![Mesh navigation example](public/mesh_navigation_example2.png)
+
 Created with CodeSandbox
