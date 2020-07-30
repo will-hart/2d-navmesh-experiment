@@ -74,14 +74,14 @@ export default function App() {
       path = navMeshBuilder(
         builder1?.polys,
         { x: 1, y: 1 },
-        { x: GRID_SIZE - 2, y: GRID_SIZE - 2 },
+        { x: gridSize - 2, y: gridSize - 2 },
       )
     }
 
     setPathElapsed((new Date().getTime() - start) / iterations)
 
     setPath(path)
-  }, [builder1, setPath, setPathElapsed])
+  }, [builder1, gridSize, setPath, setPathElapsed])
 
   React.useEffect(() => {
     setGrid(buildRandomGrid(gridSize, gridSize, obstacleDensity / 100))
