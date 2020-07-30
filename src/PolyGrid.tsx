@@ -8,12 +8,16 @@ const PolyGrid = ({
   path,
   pathElapsed,
   algoName,
+  width,
+  height,
 }: {
   builderResult?: GridBuilderResult
   colourMap: Map<number, string>
   path?: PolyPoint[]
   pathElapsed?: number
   algoName: string
+  width: number
+  height: number
 }) => {
   if (!builderResult) return <div>Loading...</div>
 
@@ -25,6 +29,8 @@ const PolyGrid = ({
         path={path}
         colourMap={colourMap}
         keybase={`poly_${algoName.replace(/\w/g, '')}`}
+        width={width}
+        height={height}
       />
       <div>
         <h3>{algoName}</h3>
