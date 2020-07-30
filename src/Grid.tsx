@@ -135,7 +135,7 @@ const Grid = ({
         ctx.fill()
       }
     }
-  }, [grid, colourMap])
+  }, [grid, colourMap, path, polys])
 
   return (
     <div className="grid">
