@@ -5,8 +5,12 @@ Trying out a couple of different approaches for building up
 to get the "best" solution, but one that works in reasonable
 time and with reasonable accuracy.
 
-Open in CodeBox or Vercel (https://csb-vz5jc-2ch0kpug0.vercel.app/)
+Open in Vercel (https://2d-navmesh-experiment.vercel.app/)
 to try random maps or draw your own and see it update live.
+
+The "best" navmesh algorithm is in `gridBuilder.ts`. The best
+navmesh pathfinding solution I tested was (stability and performance)
+was `"navmesh": "2.0.3"` a.k.a. https://github.com/mikewesthad/navmesh
 
 NavMesh building on a 40x40 grid takes ~0.2ms. Pathfinding takes
 1-5ms depending on the obstacle density.
