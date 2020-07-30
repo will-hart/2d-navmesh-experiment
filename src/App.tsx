@@ -29,6 +29,11 @@ export default function App() {
   const [path, setPath] = React.useState<PolyPoint[]>([])
   const [pathElapsed, setPathElapsed] = React.useState(0)
 
+  const [obstacleDensity, setObstacleDensity] = React.useState(
+    OBSTACLE_RATE * 100,
+  )
+  const [gridSize, setGridSize] = React.useState(GRID_SIZE)
+
   const buildGrids = React.useCallback(() => {
     setBuilder1(quickGridBuilderBenchmark(grid, gridBuilder, 100))
     setBuilder2(quickGridBuilderBenchmark(grid, gridBuilder3, 100))
@@ -36,18 +41,21 @@ export default function App() {
 
   const toggleObstacle = (x: number, y: number, forceToObstacle?: boolean) => {
     const nextGrid = [...grid]
-    nextGrid[y][x] = forceToObstacle === undefined 
-      ? (grid[y][x] === 1 ? 0 : 1)
-      : (forceToObstacle ? 1 : 0)
+    nextGrid[y][x] =
+      forceToObstacle === undefined
+        ? grid[y][x] === 1
+          ? 0
+          : 1
+        : forceToObstacle
+        ? 1
+        : 0
     setGrid(nextGrid)
   }
-  
+
   React.useEffect(() => {
     const cm = buildColourMap(
-      Math.max(
-        builder1?.numPolys || 5,
-        builder2?.numPolys || 5,
-      ))
+      Math.max(builder1?.numPolys || 5, builder2?.numPolys || 5),
+    )
     setCMap(cm)
   }, [builder1, builder2, setCMap])
 
@@ -63,39 +71,87 @@ export default function App() {
     const start = new Date().getTime()
 
     for (let i = 0; i < iterations; ++i) {
-      path = navMeshBuilder(builder1?.polys, {x:1,y:1}, {x:GRID_SIZE - 2,  y: GRID_SIZE - 2})
+      path = navMeshBuilder(
+        builder1?.polys,
+        { x: 1, y: 1 },
+        { x: GRID_SIZE - 2, y: GRID_SIZE - 2 },
+      )
     }
 
-    setPathElapsed((new Date().getTime() - start)/iterations)
+    setPathElapsed((new Date().getTime() - start) / iterations)
 
     setPath(path)
-
   }, [builder1, setPath, setPathElapsed])
+
+  React.useEffect(() => {
+    setGrid(buildRandomGrid(gridSize, gridSize, obstacleDensity / 100))
+  }, [obstacleDensity, gridSize, setGrid])
 
   return (
     <div className="App">
       <h1>2D Grid to Navmesh Experiment</h1>
-      <p><a href="https://github.com/will-hart/2d-navmesh-experiment">https://github.com/will-hart/2d-navmesh-experiment</a></p>
+      <p>
+        <a href="https://github.com/will-hart/2d-navmesh-experiment">
+          https://github.com/will-hart/2d-navmesh-experiment
+        </a>
+      </p>
       <div className="button-wrapper">
-        <button onClick={() => setGrid(buildEmptyGrid(GRID_SIZE, GRID_SIZE))}>
+        <button onClick={() => setGrid(buildEmptyGrid(gridSize, gridSize))}>
           Clear grid
         </button>
-        <button onClick={() => setGrid(buildRandomGrid(GRID_SIZE, GRID_SIZE, OBSTACLE_RATE))}>
+        <button
+          onClick={() =>
+            setGrid(buildRandomGrid(gridSize, gridSize, obstacleDensity / 100))
+          }
+        >
           Randomise grid
         </button>
       </div>
+      <div>
+        Obstacle Density
+        <input
+          type="range"
+          min="10"
+          max="100"
+          value={obstacleDensity}
+          onChange={(e) => {
+            setObstacleDensity(parseInt(e.target.value, 10))
+          }}
+        />
+        {obstacleDensity}%
+      </div>
+      <div>
+        Grid Size
+        <input
+          type="range"
+          min="10"
+          max="50"
+          value={gridSize}
+          onChange={(e) => {
+            setGridSize(parseInt(e.target.value, 10))
+          }}
+        />
+        {gridSize}x{gridSize}
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        
-    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1em' }}>
-    <Grid grid={grid} keybase="sketcher" onDraw={toggleObstacle} />
-    
-      <div>
-        <h3>Grid (click to toggle obstacles)</h3>
-      </div>
-    </div>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', marginTop: '1em' }}
+        >
+          <Grid grid={grid} keybase="sketcher" onDraw={toggleObstacle} />
+
+          <div>
+            <h3>Grid (click to toggle obstacles)</h3>
+          </div>
+        </div>
         {/* <PolyGrid builderResult={builder2} colourMap={cMap} algoName="Builder 3" /> */}
-        <PolyGrid builderResult={builder1} colourMap={cMap} path={path} pathElapsed={pathElapsed} algoName="Builder 1" />
+        <PolyGrid
+          builderResult={builder1}
+          colourMap={cMap}
+          path={path}
+          pathElapsed={pathElapsed}
+          algoName="Builder 1"
+        />
       </div>
     </div>
   )
