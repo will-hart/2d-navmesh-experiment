@@ -2,11 +2,10 @@
   "name": "2d-navmesh-experiment",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "",
+  "description": "An experiment building a 2D navmesh generator and testing two different navigation algorithms.",
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
-    "nav2d": "1.2.0",
     "navmesh": "2.0.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
@@ -23,5 +22,10 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
