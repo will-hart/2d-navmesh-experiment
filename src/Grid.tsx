@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CELL_SIZE, GRID_SIZE } from './constants'
+import { CELL_SIZE } from './constants'
 import { Poly, PolyPoint } from './gridBuilder'
 
 const Grid = ({
@@ -9,6 +9,7 @@ const Grid = ({
   path,
   onDraw,
   colourMap: cmap,
+  width, height,
 }: {
   grid: number[][]
   polys?: Poly[]
@@ -16,6 +17,8 @@ const Grid = ({
   onDraw?: (x: number, y: number, isObstacle?: boolean) => void
   keybase?: string
   colourMap?: Map<number, string>
+  width: number
+  height: number
 }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [dragging, setDragging] = React.useState(false)
@@ -26,9 +29,9 @@ const Grid = ({
   const colourMap = 
     cmap ||
     new Map<number, string>([
-      [-1, 'rgba(50, 50, 50, 0.3'],
+    [-1, 'rgba(50, 50, 50, 0.8'],
       [0, 'rgba(50, 150, 50, 0.3)'],
-      [1, 'rgba(50, 50, 50, 0.3)'],
+      [1, 'rgba(50, 50, 50, 0.8)'],
     ])
 
   const getClickedCell = React.useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -88,7 +91,7 @@ const Grid = ({
       return
     }
 
-    ctx.clearRect(0, 0, CELL_SIZE * GRID_SIZE, CELL_SIZE * GRID_SIZE)
+    ctx.clearRect(0, 0, CELL_SIZE * width, CELL_SIZE * height)
 
     // draw polys if available
     if (polys) {
@@ -135,7 +138,7 @@ const Grid = ({
         ctx.fill()
       }
     }
-  }, [grid, colourMap, path, polys])
+  }, [grid, colourMap, path, polys, width, height])
 
   return (
     <div className="grid">
@@ -148,12 +151,12 @@ const Grid = ({
         onMouseMove={onMouseMove}
         style={{ 
           background: 'white',
-          width: `${GRID_SIZE * CELL_SIZE}px`, 
-          height: `${GRID_SIZE * CELL_SIZE}px` 
+          width: `${width * CELL_SIZE}px`, 
+          height: `${height * CELL_SIZE}px` 
         }}
         ref={canvasRef}
-        width={CELL_SIZE * GRID_SIZE}
-        height={CELL_SIZE * GRID_SIZE}
+        width={CELL_SIZE * width}
+        height={CELL_SIZE * height}
       />
     </div>
   )
