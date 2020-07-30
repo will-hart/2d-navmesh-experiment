@@ -74,6 +74,8 @@ export default function App() {
 
   return (
     <div className="App">
+      <h1>2D Grid to Navmesh Experiment</h1>
+      <p><a href="https://github.com/will-hart/2d-navmesh-experiment">https://github.com/will-hart/2d-navmesh-experiment</a></p>
       <div className="button-wrapper">
         <button onClick={() => setGrid(buildEmptyGrid(GRID_SIZE, GRID_SIZE))}>
           Clear grid
