@@ -138,7 +138,7 @@ export default function App() {
         <div
           style={{ display: 'flex', flexDirection: 'column', marginTop: '1em' }}
         >
-          <Grid grid={grid} keybase="sketcher" onDraw={toggleObstacle} />
+          <Grid grid={grid} keybase="sketcher" onDraw={toggleObstacle} width={gridSize} height={gridSize} />
 
           <div>
             <h3>Grid (click to toggle obstacles)</h3>
@@ -151,6 +151,8 @@ export default function App() {
           path={path}
           pathElapsed={pathElapsed}
           algoName="Builder 1"
+          width={gridSize}
+          height={gridSize} 
         />
       </div>
     </div>
