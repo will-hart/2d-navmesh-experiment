@@ -1,8 +1,8 @@
 import * as React from 'react'
-import Seeker from '../lib/Seeker'
+import { ISteeredAgent } from '../lib/Seeker'
 import { AgentSettingsProps } from './AgentSettings'
 
-const useAgent = <T extends Seeker>(
+const useAgent = <T extends ISteeredAgent>(
   initialAgent: T,
 ): AgentSettingsProps & { agent: React.MutableRefObject<T> } => {
   const agent = React.useRef<T>(initialAgent)

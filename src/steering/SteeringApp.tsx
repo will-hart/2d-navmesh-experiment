@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 
 import Seeker from './lib/Seeker'
+import Fleer from './lib/Fleer'
 import Vector2 from './lib/Vector2'
 
 import AgentSettings from './components/AgentSettings'
@@ -13,16 +14,18 @@ export default function SteeringApp() {
     new Seeker(new Vector2(50, 50), new Vector2(0, 0), 10, 3, 5),
   )
 
-  const { agent: fleer, ...fleerSettings } = useAgentSettings<Seeker>(
-    new Seeker(
+  const { agent: fleer, ...fleerSettings } = useAgentSettings<Fleer>(
+    new Fleer(
       new Vector2(350, 350),
       new Vector2(0, 0),
-      10,
-      3,
-      5,
+      1,
+      1,
+      100,
       'rgb(50, 200, 50)',
     ),
   )
+
+  fleer.current.setTargetAgent(seeker.current)
 
   const { canvasRef } = useAnimationFrame(
     [seeker.current, fleer.current],

@@ -1,6 +1,17 @@
 import Vector2 from './Vector2'
 
-class Seeker {
+export interface ISteeredAgent {
+  setTarget: (target: Vector2) => void
+  update: () => void
+  vel: Vector2
+  pos: Vector2
+  maxV: number
+  maxF: number
+  mass: number
+  colour: string
+}
+
+class Seeker implements ISteeredAgent {
   protected target: Vector2 | null = null
 
   constructor(
