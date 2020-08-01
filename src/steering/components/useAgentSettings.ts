@@ -6,9 +6,12 @@ const useAgent = <T extends ISteeredAgent>(
   initialAgent: T,
 ): AgentSettingsProps & { agent: React.MutableRefObject<T> } => {
   const agent = React.useRef<T>(initialAgent)
-  const [mass, _setMass] = React.useState(10)
-  const [maxForce, _setMaxForce] = React.useState(3)
-  const [maxVel, _setMaxVel] = React.useState(5)
+  const [mass, _setMass] = React.useState(agent.current.mass)
+  const [maxForce, _setMaxForce] = React.useState(agent.current.maxF)
+  const [maxVel, _setMaxVel] = React.useState(agent.current.maxV)
+  const [activeRadius, _setactiveRadius] = React.useState(
+    agent.current.activeRadius,
+  )
 
   const setMass = (mass: number) => {
     _setMass(mass)
@@ -22,8 +25,22 @@ const useAgent = <T extends ISteeredAgent>(
     _setMaxVel(maxVel)
     agent.current.maxV = maxVel
   }
+  const setActiveRadius = (activeRadius: number) => {
+    _setactiveRadius(activeRadius)
+    agent.current.activeRadius = activeRadius
+  }
 
-  return { mass, setMass, maxForce, setMaxForce, maxVel, setMaxVel, agent }
+  return {
+    mass,
+    activeRadius,
+    setActiveRadius,
+    setMass,
+    maxForce,
+    setMaxForce,
+    maxVel,
+    setMaxVel,
+    agent,
+  }
 }
 
 export default useAgent

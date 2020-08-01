@@ -15,21 +15,39 @@ export const clearCanvas = (
 export const drawAgent = (
   ctx: CanvasRenderingContext2D,
   agent: Seeker,
+  displayRadius: boolean,
 ): void => {
   ctx.beginPath()
 
+  // agent
   ctx.fillStyle = agent.colour
   ctx.ellipse(agent.pos.x, agent.pos.y, 5, 5, 0, 0, 360)
   ctx.fill()
 
-  // TODO fix
+  // velocity vector
   ctx.beginPath()
   ctx.strokeStyle = agent.colour
-  ctx.lineWidth = 4
+  ctx.lineWidth = 1
   ctx.moveTo(agent.pos.x, agent.pos.y)
-  const lineTo = agent.pos.clone().add(agent.vel.clone().scale(3.5))
+  const lineTo = agent.pos.clone().add(agent.vel.clone().scale(4))
   ctx.lineTo(lineTo.x, lineTo.y)
   ctx.stroke()
+
+  // active radius
+  if (displayRadius) {
+    ctx.beginPath()
+    ctx.strokeStyle = agent.colour
+    ctx.ellipse(
+      agent.pos.x,
+      agent.pos.y,
+      agent.activeRadius,
+      agent.activeRadius,
+      0,
+      0,
+      360,
+    )
+    ctx.stroke()
+  }
 }
 
 export const useAnimationFrame = (
@@ -38,6 +56,7 @@ export const useAnimationFrame = (
   height: number,
 ) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const [displayRadius, setDisplayRadius] = React.useState(true)
 
   React.useEffect(() => {
     let animationFrame = 0
@@ -52,7 +71,7 @@ export const useAnimationFrame = (
       for (const agent of agents) {
         if (!agent) continue
         agent.update()
-        drawAgent(ctx, agent)
+        drawAgent(ctx, agent, displayRadius)
       }
 
       loop()
@@ -69,5 +88,5 @@ export const useAnimationFrame = (
     }
   }, [agents, width, height])
 
-  return { canvasRef }
+  return { canvasRef, displayRadius, setDisplayRadius }
 }

@@ -27,7 +27,7 @@ export default function SteeringApp() {
 
   fleer.current.setTargetAgent(seeker.current)
 
-  const { canvasRef } = useAnimationFrame(
+  const { canvasRef, displayRadius, setDisplayRadius } = useAnimationFrame(
     [seeker.current, fleer.current],
     600,
     600,
@@ -57,7 +57,16 @@ export default function SteeringApp() {
   return (
     <div className="App">
       <h1>Steering Experiments</h1>
-      <h3>Click on the canvas to steer to that point</h3>
+      <p>Click on the canvas to steer to that point</p>
+      <p>
+        <input
+          id="display-radius-input"
+          type="checkbox"
+          checked={displayRadius}
+          onClick={() => setDisplayRadius(!displayRadius)}
+        />{' '}
+        <label htmlFor="display-radius-input">Display active radius</label>
+      </p>
 
       <div style={{ position: 'absolute', top: 0, left: 0 }}>
         <Link to="/">&lt; back</Link>

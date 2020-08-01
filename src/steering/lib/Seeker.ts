@@ -8,11 +8,14 @@ export interface ISteeredAgent {
   maxV: number
   maxF: number
   mass: number
+  activeRadius: number
   colour: string
 }
 
 class Seeker implements ISteeredAgent {
   protected target: Vector2 | null = null
+
+  public activeRadius = 100
 
   constructor(
     protected position: Vector2,
@@ -53,10 +56,19 @@ class Seeker implements ISteeredAgent {
   protected getSteering = (): Vector2 =>
     this.getDesiredVelocity().subtract(this.velocity)
 
-  protected getDesiredVelocity = (): Vector2 =>
-    !this.target
-      ? new Vector2(0, 0)
-      : this.target.clone().subtract(this.position).norm().scale(this.maxV)
+  protected getDesiredVelocity = (): Vector2 => {
+    if (!this.target) return new Vector2(0, 0)
+
+    const delta = this.target.clone().subtract(this.position)
+    const distance = delta.length()
+
+    const scaleFactor =
+      distance > this.activeRadius
+        ? this.maxV
+        : this.maxV * (distance / this.activeRadius)
+
+    return delta.norm().scale(scaleFactor)
+  }
 }
 
 export default Seeker

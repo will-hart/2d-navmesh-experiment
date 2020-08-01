@@ -2,6 +2,8 @@ import * as React from 'react'
 import Seeker from '../lib/Seeker'
 
 export interface AgentSettingsProps {
+  activeRadius: number
+  setActiveRadius: (val: number) => void
   mass: number
   setMass: (val: number) => void
   maxForce: number
@@ -12,6 +14,8 @@ export interface AgentSettingsProps {
 
 const AgentSettings = ({
   title,
+  activeRadius,
+  setActiveRadius,
   mass,
   setMass,
   maxForce,
@@ -67,6 +71,19 @@ const AgentSettings = ({
           }}
         />
         {maxForce} N
+      </div>
+      <div>
+        {title} active radius
+        <input
+          type="range"
+          min="10"
+          max="400"
+          value={activeRadius}
+          onChange={(e) => {
+            setActiveRadius(parseInt(e.target.value, 10))
+          }}
+        />
+        {activeRadius} m
       </div>
     </div>
   )
