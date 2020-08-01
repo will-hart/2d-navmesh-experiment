@@ -6,9 +6,9 @@ class Seeker {
   constructor(
     protected position: Vector2,
     protected velocity: Vector2,
-    protected maxV: number,
-    protected maxF: number,
-    protected mass: number,
+    public maxV: number,
+    public maxF: number,
+    public mass: number,
   ) {}
 
   public setTarget = (target: Vector2): void => {
