@@ -9,6 +9,7 @@ class Seeker {
     public maxV: number,
     public maxF: number,
     public mass: number,
+    public colour = 'rgb(200, 50, 50)',
   ) {}
 
   public setTarget = (target: Vector2): void => {
@@ -29,7 +30,7 @@ class Seeker {
     return this.velocity
   }
 
-  private applySteeringForce = (steering: Vector2): void => {
+  protected applySteeringForce = (steering: Vector2): void => {
     const steer = steering
       .clone()
       .truncate(this.maxF)
@@ -38,10 +39,10 @@ class Seeker {
     this.velocity.add(steer).truncate(this.maxV)
   }
 
-  private getSteering = (): Vector2 =>
+  protected getSteering = (): Vector2 =>
     this.getDesiredVelocity().subtract(this.velocity)
 
-  private getDesiredVelocity = (): Vector2 =>
+  protected getDesiredVelocity = (): Vector2 =>
     !this.target
       ? new Vector2(0, 0)
       : this.target.clone().subtract(this.position).norm().scale(this.maxV)

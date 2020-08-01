@@ -18,13 +18,13 @@ export const drawAgent = (
 ): void => {
   ctx.beginPath()
 
-  ctx.fillStyle = 'red'
+  ctx.fillStyle = agent.colour
   ctx.ellipse(agent.pos.x, agent.pos.y, 5, 5, 0, 0, 360)
   ctx.fill()
 
   // TODO fix
   ctx.beginPath()
-  ctx.strokeStyle = 'red'
+  ctx.strokeStyle = agent.colour
   ctx.lineWidth = 4
   ctx.moveTo(agent.pos.x, agent.pos.y)
   const lineTo = agent.pos.clone().add(agent.vel.clone().scale(3.5))
@@ -33,7 +33,7 @@ export const drawAgent = (
 }
 
 export const useAnimationFrame = (
-  agent: Seeker,
+  agents: (Seeker | undefined)[],
   width: number,
   height: number,
 ) => {
@@ -47,9 +47,13 @@ export const useAnimationFrame = (
       const ctx = canvasRef.current.getContext('2d')
       if (!ctx) return
 
-      agent.update()
       clearCanvas(ctx, width, height)
-      drawAgent(ctx, agent)
+
+      for (const agent of agents) {
+        if (!agent) continue
+        agent.update()
+        drawAgent(ctx, agent)
+      }
 
       loop()
     }
@@ -63,7 +67,7 @@ export const useAnimationFrame = (
     return () => {
       cancelAnimationFrame(animationFrame)
     }
-  }, [agent, width, height])
+  }, [agents, width, height])
 
   return { canvasRef }
 }
