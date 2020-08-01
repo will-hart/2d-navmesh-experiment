@@ -43,10 +43,10 @@ export default function App() {
     pathElapsed: 0,
   })
 
-  const [iterations, setIterations] = React.useState(100)
+  const [iterations, setIterations] = React.useState(20)
 
   const buildGrids = React.useCallback(() => {
-    setBuilder1(quickGridBuilderBenchmark(grid, gridBuilder, 100))
+    setBuilder1(quickGridBuilderBenchmark(grid, gridBuilder, iterations))
     // setBuilder2(quickGridBuilderBenchmark(grid, gridBuilder3, 100))
   }, [setBuilder1, grid])
 
