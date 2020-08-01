@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
+
 import PolyGrid from './PolyGrid'
 import {
   buildRandomGrid,
@@ -15,7 +17,7 @@ import { getNavMesh as navMeshBuilder } from './NavMeshBuilder'
 import { GRID_SIZE, OBSTACLE_RATE } from './constants'
 import { GridSearchResult, getL1PathFromGrid } from './GridNavmeshBuilder'
 
-export default function NavMeshApp(props: { onBack: () => void }) {
+export default function NavMeshApp() {
   const [grid, setGrid] = React.useState<number[][]>(
     buildRandomGrid(GRID_SIZE, GRID_SIZE, OBSTACLE_RATE),
   )
@@ -105,7 +107,7 @@ export default function NavMeshApp(props: { onBack: () => void }) {
       <h1>2D Grid to Navmesh Experiment</h1>
 
       <div style={{ position: 'absolute', top: 0, left: 0 }}>
-        <button onClick={props.onBack}>&lt; back</button>
+        <Link to="/">&lt; back</Link>
       </div>
 
       <div
