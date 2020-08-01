@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CELL_SIZE } from './constants'
+import { CELL_SIZE, GRID_SIZE } from './constants'
 import { Poly, PolyPoint } from './gridBuilder'
 
 const Grid = ({
@@ -9,7 +9,8 @@ const Grid = ({
   path,
   onDraw,
   colourMap: cmap,
-  width, height,
+  width,
+  height,
 }: {
   grid: number[][]
   polys?: Poly[]
@@ -26,49 +27,54 @@ const Grid = ({
   const [nextPos, setNextPos] = React.useState({ x: -1, y: -1 })
   const [isAddingObstacle, setIsAddingObstacle] = React.useState(true)
 
-  const colourMap = 
+  const colourMap =
     cmap ||
     new Map<number, string>([
-    [-1, 'rgba(50, 50, 50, 0.8'],
+      [-1, 'rgba(50, 50, 50, 0.8'],
       [0, 'rgba(50, 150, 50, 0.3)'],
       [1, 'rgba(50, 50, 50, 0.8)'],
     ])
 
-  const getClickedCell = React.useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect()
-    if (!rect) return
+  const getClickedCell = React.useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const rect = canvasRef.current?.getBoundingClientRect()
+      if (!rect) return
 
-    const x = Math.floor((e.clientX - rect.left) / CELL_SIZE)
-    const y = Math.floor((e.clientY - rect.top) / CELL_SIZE)
+      const x = Math.floor((e.clientX - rect.left) / CELL_SIZE)
+      const y = Math.floor((e.clientY - rect.top) / CELL_SIZE)
 
-    return {x ,y}
-  }, [])
+      return { x, y }
+    },
+    [],
+  )
 
-  const onMouseDown = React.useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    setDragging(true)
-    const {x, y} = getClickedCell(e) || { x: 0, y: 0 }
-    setIsAddingObstacle(grid[y][x] === 0)
-    console.log(grid[y][x])
-  }, [grid, getClickedCell, setDragging, setIsAddingObstacle])
+  const onMouseDown = React.useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      setDragging(true)
+      const { x, y } = getClickedCell(e) || { x: 0, y: 0 }
+      setIsAddingObstacle(grid[y][x] === 0)
+    },
+    [grid, getClickedCell, setDragging, setIsAddingObstacle],
+  )
 
   const onMouseMove = React.useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!dragging) return
 
-      const {x, y} = getClickedCell(e) || { x: 0, y: 0 }
+      const { x, y } = getClickedCell(e) || { x: 0, y: 0 }
       setNextPos({ x, y })
     },
     [dragging, getClickedCell, setNextPos],
   )
 
   React.useEffect(() => {
-    if (!onDraw) { 
-      return 
+    if (!onDraw) {
+      return
     }
 
     // this prevents spurious updates and should prevent endless loops
-    if (nextPos.x === lastPos.x && nextPos.y === lastPos.y) { 
-      return 
+    if (nextPos.x === lastPos.x && nextPos.y === lastPos.y) {
+      return
     }
 
     // draw on the grid item if we aren't setting an "unclicked" state
@@ -96,11 +102,16 @@ const Grid = ({
     // draw polys if available
     if (polys) {
       for (const poly of polys) {
-        ctx.beginPath();
+        ctx.beginPath()
         ctx.lineWidth = 1
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = 'black'
         ctx.fillStyle = colourMap.get(poly.id) || '#eee'
-        ctx.rect(poly.x * CELL_SIZE, poly.y * CELL_SIZE, poly.width * CELL_SIZE, poly.height * CELL_SIZE)
+        ctx.rect(
+          poly.x * CELL_SIZE,
+          poly.y * CELL_SIZE,
+          poly.width * CELL_SIZE,
+          poly.height * CELL_SIZE,
+        )
         ctx.fill()
         ctx.stroke()
         ctx.closePath()
@@ -110,8 +121,8 @@ const Grid = ({
     if (path && path.length > 1) {
       ctx.beginPath()
       ctx.lineWidth = 2
-      ctx.strokeStyle = "red"
-      ctx.fillStyle = "red"
+      ctx.strokeStyle = 'red'
+      ctx.fillStyle = 'red'
       ctx.moveTo(path[0].x * CELL_SIZE, path[0].y * CELL_SIZE)
 
       for (let i = 1; i < path.length; ++i) {
@@ -132,7 +143,7 @@ const Grid = ({
     // otherwise just draw a bunch of grid squares
     for (let y = 0; y < grid.length; ++y) {
       for (let x = 0; x < grid[y].length; ++x) {
-        ctx.beginPath();
+        ctx.beginPath()
         ctx.fillStyle = colourMap.get(grid[y][x]) || '#eee'
         ctx.rect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE)
         ctx.fill()
@@ -149,10 +160,10 @@ const Grid = ({
           setLastPos({ x: -1, y: -1 })
         }}
         onMouseMove={onMouseMove}
-        style={{ 
+        style={{
           background: 'white',
-          width: `${width * CELL_SIZE}px`, 
-          height: `${height * CELL_SIZE}px` 
+          width: `${width * CELL_SIZE}px`,
+          height: `${height * CELL_SIZE}px`,
         }}
         ref={canvasRef}
         width={CELL_SIZE * width}
