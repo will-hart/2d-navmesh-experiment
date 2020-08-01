@@ -28,6 +28,7 @@ export default function App() {
 
   const [path, setPath] = React.useState<PolyPoint[]>([])
   const [pathElapsed, setPathElapsed] = React.useState(0)
+  const [meshElapsed, setMeshElapsed] = React.useState(0)
 
   const [obstacleDensity, setObstacleDensity] = React.useState(
     OBSTACLE_RATE * 100,
@@ -67,19 +68,15 @@ export default function App() {
     if (!builder1?.polys) return
 
     const iterations = 100
-    let path: PolyPoint[] = []
-    const start = new Date().getTime()
+    const { path, meshingElapsed, pathingElapsed } = navMeshBuilder(
+      builder1?.polys,
+      { x: 1, y: 1 },
+      { x: gridSize - 2, y: gridSize - 2 },
+      iterations,
+    )
 
-    for (let i = 0; i < iterations; ++i) {
-      path = navMeshBuilder(
-        builder1?.polys,
-        { x: 1, y: 1 },
-        { x: gridSize - 2, y: gridSize - 2 },
-      )
-    }
-
-    setPathElapsed((new Date().getTime() - start) / iterations)
-
+    setPathElapsed(pathingElapsed)
+    setMeshElapsed(meshingElapsed)
     setPath(path)
   }, [builder1, gridSize, setPath, setPathElapsed])
 
@@ -138,7 +135,14 @@ export default function App() {
         <div
           style={{ display: 'flex', flexDirection: 'column', marginTop: '1em' }}
         >
-          <Grid grid={grid} keybase="sketcher" onDraw={toggleObstacle} width={gridSize} height={gridSize} />
+          <Grid
+            grid={grid}
+            path={path}
+            keybase="sketcher"
+            onDraw={toggleObstacle}
+            width={gridSize}
+            height={gridSize}
+          />
 
           <div>
             <h3>Grid (click to toggle obstacles)</h3>
@@ -149,10 +153,11 @@ export default function App() {
           builderResult={builder1}
           colourMap={cMap}
           path={path}
+          meshElapsed={(builder1?.elapsed || 0) + meshElapsed}
           pathElapsed={pathElapsed}
           algoName="Builder 1"
           width={gridSize}
-          height={gridSize} 
+          height={gridSize}
         />
       </div>
     </div>

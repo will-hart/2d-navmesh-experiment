@@ -14,10 +14,30 @@ export const getNavMesh = (
   polys: Poly[],
   from: PolyPoint,
   to: PolyPoint,
-): PolyPoint[] => {
-  const mesh = polys.map(polyMapper)
-  const navMesh = new NavMesh(mesh)
-  return navMesh.findPath(from, to)
+  iterations: number,
+): { path: PolyPoint[]; meshingElapsed: number; pathingElapsed: number } => {
+  let start = new Date().getTime()
+  let navMesh: any = null
+  let path: PolyPoint[] = []
+
+  for (let i = 0; i < iterations; ++i) {
+    const mesh = polys.map(polyMapper)
+    navMesh = new NavMesh(mesh)
+  }
+
+  const meshingElapsed = new Date().getTime() - start
+  start = new Date().getTime()
+
+  for (let i = 0; i < iterations; ++i) {
+    path = navMesh.findPath(from, to)
+  }
+  const pathingElapsed = new Date().getTime() - start
+
+  return {
+    path,
+    meshingElapsed: meshingElapsed / iterations,
+    pathingElapsed: pathingElapsed / iterations,
+  }
 }
 
 // const polyMapper2 = (poly: Poly): PolyArrayPoint[] => [

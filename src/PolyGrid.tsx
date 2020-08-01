@@ -6,6 +6,7 @@ const PolyGrid = ({
   builderResult,
   colourMap,
   path,
+  meshElapsed,
   pathElapsed,
   algoName,
   width,
@@ -14,6 +15,7 @@ const PolyGrid = ({
   builderResult?: GridBuilderResult
   colourMap: Map<number, string>
   path?: PolyPoint[]
+  meshElapsed?: number
   pathElapsed?: number
   algoName: string
   width: number
@@ -35,7 +37,7 @@ const PolyGrid = ({
       <div>
         <h3>{algoName}</h3>
         <p>{builderResult.numPolys} polygons</p>
-        <p>{((builderResult.elapsed || 0) / 100).toFixed(2)} ms/iter mesh</p>
+        <p>{(meshElapsed || 0).toFixed(2)} ms/iter mesh</p>
 
         <p>
           {pathElapsed && `${pathElapsed} ms/iter path`}

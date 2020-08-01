@@ -59,5 +59,8 @@ export const quickGridBuilderBenchmark = (
     builderResult = builder(grid)
   }
 
-  return { ...builderResult, elapsed: new Date().getTime() - start }
+  return {
+    ...builderResult,
+    elapsed: (new Date().getTime() - start) / iterations,
+  }
 }
