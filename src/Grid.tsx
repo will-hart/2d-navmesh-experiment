@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CELL_SIZE, GRID_SIZE } from './constants'
+import { CELL_SIZE } from './constants'
 import { Poly, PolyPoint } from './gridBuilder'
 
 const Grid = ({

@@ -95,7 +95,7 @@ export default function App() {
         iterations,
       ),
     )
-  }, [builder1, gridSize, iterations, setPath, setPathElapsed])
+  }, [builder1, grid, gridSize, iterations, setPath, setPathElapsed])
 
   React.useEffect(() => {
     setGrid(buildRandomGrid(gridSize, gridSize, obstacleDensity / 100))
@@ -104,61 +104,118 @@ export default function App() {
   return (
     <div className="App">
       <h1>2D Grid to Navmesh Experiment</h1>
-      <p>
-        <a href="https://github.com/will-hart/2d-navmesh-experiment">
-          https://github.com/will-hart/2d-navmesh-experiment
-        </a>
-      </p>
-      <div className="button-wrapper">
-        <button onClick={() => setGrid(buildEmptyGrid(gridSize, gridSize))}>
-          Clear grid
-        </button>
-        <button
-          onClick={() =>
-            setGrid(buildRandomGrid(gridSize, gridSize, obstacleDensity / 100))
-          }
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          margin: '1em',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+          <h4>Controls</h4>
+          <div className="button-wrapper">
+            <button onClick={() => setGrid(buildEmptyGrid(gridSize, gridSize))}>
+              Clear grid
+            </button>
+            <button
+              onClick={() =>
+                setGrid(
+                  buildRandomGrid(gridSize, gridSize, obstacleDensity / 100),
+                )
+              }
+            >
+              Randomise grid
+            </button>
+          </div>
+          <div>
+            Obstacle Density
+            <input
+              type="range"
+              min="10"
+              max="100"
+              value={obstacleDensity}
+              onChange={(e) => {
+                setObstacleDensity(parseInt(e.target.value, 10))
+              }}
+            />
+            {obstacleDensity}%
+          </div>
+          <div>
+            Grid Size
+            <input
+              type="range"
+              min="10"
+              max="50"
+              value={gridSize}
+              onChange={(e) => {
+                setGridSize(parseInt(e.target.value, 10))
+              }}
+            />
+            {gridSize}x{gridSize}
+          </div>
+          <div>
+            Benchmark Iterations
+            <input
+              type="range"
+              min="1"
+              max="250"
+              value={iterations}
+              onChange={(e) => {
+                setIterations(parseInt(e.target.value, 10))
+              }}
+            />
+            {iterations}
+          </div>
+        </div>
+        <div
+          style={{
+            textAlign: 'left',
+            fontSize: '0.7em',
+            color: '#666',
+            width: '50%',
+          }}
         >
-          Randomise grid
-        </button>
-      </div>
-      <div>
-        Obstacle Density
-        <input
-          type="range"
-          min="10"
-          max="100"
-          value={obstacleDensity}
-          onChange={(e) => {
-            setObstacleDensity(parseInt(e.target.value, 10))
-          }}
-        />
-        {obstacleDensity}%
-      </div>
-      <div>
-        Grid Size
-        <input
-          type="range"
-          min="10"
-          max="50"
-          value={gridSize}
-          onChange={(e) => {
-            setGridSize(parseInt(e.target.value, 10))
-          }}
-        />
-        {gridSize}x{gridSize}
-      </div>
-      <div>
-        Benchmark Iterations
-        <input
-          type="range"
-          min="1"
-          max="250"
-          value={iterations}
-          onChange={(e) => {
-            setIterations(parseInt(e.target.value, 10))
-          }}
-        />
-        {iterations}
+          <h4>About</h4>
+          <p>
+            This is a quick experiment to try different pathfinding methods for
+            2D grids. And by quick I mean quick and ugly :)
+          </p>
+          <p>
+            On the left, a 2d grid can be randomly generated or "drawn". The{' '}
+            <a href="https://github.com/mikolalysenko/l1-path-finder">
+              L1-path-finder
+            </a>{' '}
+            is used to find a path and overlay it in red.
+          </p>
+          <p>
+            On the right hand diagram, it uses a custom 2D grid to navmesh
+            method and then the{' '}
+            <a href="https://github.com/mikewesthad/navmesh">navmesh</a> package
+            to find paths. The times of the two approaches are compared. There
+            are several different navmesh building algorithms available.
+          </p>
+          <p>
+            <strong>TODO</strong>
+            <ul>
+              <li>
+                some sort of marching squares method for building navmeshes
+              </li>
+              <li>
+                some sort of mesh collapsing / decimation approach to reduce the
+                number of polys in built meshes
+              </li>
+            </ul>
+          </p>
+
+          <p>
+            Repo:
+            <a href="https://github.com/will-hart/2d-navmesh-experiment">
+              https://github.com/will-hart/2d-navmesh-experiment
+            </a>
+          </p>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
