@@ -10,7 +10,7 @@ export default function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/namesh">
+        <Route path="/navmesh">
           <NavMeshApp />
         </Route>
         <Route path="/steering">
