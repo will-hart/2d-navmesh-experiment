@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { CELL_SIZE } from './constants'
 import { Poly, PolyPoint } from './gridBuilder'
+import { drawPolys, drawGrid, clearCanvas } from './canvasUtilities'
 
 const Grid = ({
   grid,
@@ -11,6 +12,7 @@ const Grid = ({
   colourMap: cmap,
   width,
   height,
+  showAgent,
 }: {
   grid: number[][]
   polys?: Poly[]
@@ -20,6 +22,7 @@ const Grid = ({
   colourMap?: Map<number, string>
   width: number
   height: number
+  showAgent?: boolean
 }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [dragging, setDragging] = React.useState(false)
@@ -86,68 +89,17 @@ const Grid = ({
   }, [isAddingObstacle, setLastPos, lastPos, nextPos, onDraw])
 
   React.useEffect(() => {
-    if (!canvasRef.current) {
-      console.warn('No canvas to draw on')
-      return
-    }
-
+    if (!canvasRef.current) return
     const ctx = canvasRef.current.getContext('2d')
-    if (!ctx) {
-      console.log('No drawing context')
-      return
+    if (!ctx) return
+
+    clearCanvas(ctx, width, height)
+
+    if (grid) {
+      drawGrid(ctx, grid, colourMap)
     }
-
-    ctx.clearRect(0, 0, CELL_SIZE * width, CELL_SIZE * height)
-
-    // draw polys if available
     if (polys) {
-      for (const poly of polys) {
-        ctx.beginPath()
-        ctx.lineWidth = 1
-        ctx.strokeStyle = 'black'
-        ctx.fillStyle = colourMap.get(poly.id) || '#eee'
-        ctx.rect(
-          poly.x * CELL_SIZE,
-          poly.y * CELL_SIZE,
-          poly.width * CELL_SIZE,
-          poly.height * CELL_SIZE,
-        )
-        ctx.fill()
-        ctx.stroke()
-        ctx.closePath()
-      }
-    }
-
-    if (path && path.length > 1) {
-      ctx.beginPath()
-      ctx.lineWidth = 2
-      ctx.strokeStyle = 'red'
-      ctx.fillStyle = 'red'
-      ctx.moveTo(path[0].x * CELL_SIZE, path[0].y * CELL_SIZE)
-
-      for (let i = 1; i < path.length; ++i) {
-        ctx.lineTo(path[i].x * CELL_SIZE, path[i].y * CELL_SIZE)
-      }
-
-      ctx.stroke()
-
-      for (const pt of path) {
-        ctx.beginPath()
-        ctx.ellipse(pt.x * CELL_SIZE, pt.y * CELL_SIZE, 3, 3, 0, 0, 180)
-        ctx.fill()
-      }
-    }
-
-    if (polys) return
-
-    // otherwise just draw a bunch of grid squares
-    for (let y = 0; y < grid.length; ++y) {
-      for (let x = 0; x < grid[y].length; ++x) {
-        ctx.beginPath()
-        ctx.fillStyle = colourMap.get(grid[y][x]) || '#eee'
-        ctx.rect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE)
-        ctx.fill()
-      }
+      drawPolys(ctx, width, height, polys, colourMap, path)
     }
   }, [grid, colourMap, path, polys, width, height])
 

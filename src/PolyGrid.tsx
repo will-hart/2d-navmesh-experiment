@@ -11,6 +11,7 @@ const PolyGrid = ({
   algoName,
   width,
   height,
+  showAgent,
 }: {
   builderResult?: GridBuilderResult
   colourMap: Map<number, string>
@@ -20,6 +21,7 @@ const PolyGrid = ({
   algoName: string
   width: number
   height: number
+  showAgent?: boolean
 }) => {
   if (!builderResult) return <div>Loading...</div>
 
@@ -33,6 +35,7 @@ const PolyGrid = ({
         keybase={`poly_${algoName.replace(/\w/g, '')}`}
         width={width}
         height={height}
+        showAgent={showAgent}
       />
       <div>
         <h3>{algoName}</h3>
@@ -40,7 +43,7 @@ const PolyGrid = ({
         <p>{(meshElapsed || 0).toFixed(2)} ms/iter mesh</p>
 
         <p>
-          {pathElapsed && `${pathElapsed} ms/iter path`}
+          {(pathElapsed || 0) > 0 && `${pathElapsed?.toFixed(2)} ms/iter path`}
           {!path && ', no path found'}
         </p>
       </div>

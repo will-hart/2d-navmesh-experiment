@@ -48,7 +48,7 @@ export default function App() {
   const buildGrids = React.useCallback(() => {
     setBuilder1(quickGridBuilderBenchmark(grid, gridBuilder, iterations))
     // setBuilder2(quickGridBuilderBenchmark(grid, gridBuilder3, 100))
-  }, [setBuilder1, grid])
+  }, [grid, iterations, setBuilder1])
 
   const toggleObstacle = (x: number, y: number, forceToObstacle?: boolean) => {
     const nextGrid = [...grid]
@@ -198,16 +198,14 @@ export default function App() {
           </p>
           <p>
             <strong>TODO</strong>
-            <ul>
-              <li>
-                some sort of marching squares method for building navmeshes
-              </li>
-              <li>
-                some sort of mesh collapsing / decimation approach to reduce the
-                number of polys in built meshes
-              </li>
-            </ul>
           </p>
+          <ul>
+            <li>some sort of marching squares method for building navmeshes</li>
+            <li>
+              some sort of mesh collapsing / decimation approach to reduce the
+              number of polys in built meshes
+            </li>
+          </ul>
 
           <p>
             Repo:
@@ -233,8 +231,8 @@ export default function App() {
 
           <div>
             <h3>Click grid to toggle obstacles</h3>
-            <p>L1 Mesh: {l1Result.meshElapsed}ms/iter</p>
-            <p>L1 Path: {l1Result.pathElapsed}ms/iter</p>
+            <p>L1 Mesh: {l1Result.meshElapsed?.toFixed(2)}ms/iter</p>
+            <p>L1 Path: {l1Result.pathElapsed?.toFixed(2)}ms/iter</p>
           </div>
         </div>
         {/* <PolyGrid builderResult={builder2} colourMap={cMap} algoName="Builder 3" /> */}
@@ -247,6 +245,7 @@ export default function App() {
           algoName="Builder 1"
           width={gridSize}
           height={gridSize}
+          showAgent
         />
       </div>
     </div>

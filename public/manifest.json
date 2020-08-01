@@ -1,0 +1,8 @@
+{
+  "short_name": "2D-NavMesh",
+  "name": "2D NavMesh Experiment",
+  "description": "A 2D NavMesh Experiment",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}
