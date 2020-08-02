@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Seeker from './lib/Seeker'
+import SteeringAgent from './lib/SteeringAgent'
 
 export const clearCanvas = (
   ctx: CanvasRenderingContext2D,
@@ -14,20 +14,20 @@ export const clearCanvas = (
 
 export const drawAgent = (
   ctx: CanvasRenderingContext2D,
-  agent: Seeker,
+  agent: SteeringAgent,
   displayOptions: { showRadius: boolean; showTarget: boolean },
 ): void => {
   const { showRadius, showTarget } = displayOptions
 
   // agent
   ctx.beginPath()
-  ctx.fillStyle = agent.colour
+  ctx.fillStyle = agent.debugColour
   ctx.ellipse(agent.pos.x, agent.pos.y, 5, 5, 0, 0, 360)
   ctx.fill()
 
   // velocity vector
   ctx.beginPath()
-  ctx.strokeStyle = agent.colour
+  ctx.strokeStyle = agent.debugColour
   ctx.lineWidth = 1
   ctx.moveTo(agent.pos.x, agent.pos.y)
   const lineTo = agent.pos.clone().add(agent.vel.clone().scale(15))
@@ -38,12 +38,12 @@ export const drawAgent = (
   if (showRadius) {
     ctx.beginPath()
     ctx.lineWidth = 1
-    ctx.strokeStyle = agent.colour
+    ctx.strokeStyle = agent.debugColour
     ctx.ellipse(
       agent.pos.x,
       agent.pos.y,
-      agent.activeRadius,
-      agent.activeRadius,
+      agent.stoppingRadius || 0,
+      agent.stoppingRadius || 0,
       0,
       0,
       360,
@@ -54,7 +54,7 @@ export const drawAgent = (
   // draw target
   if (agent.targetPos && showTarget) {
     ctx.beginPath()
-    ctx.strokeStyle = agent.colour
+    ctx.strokeStyle = agent.debugColour
     ctx.lineWidth = 2
     ctx.ellipse(agent.targetPos.x, agent.targetPos.y, 5, 5, 0, 0, 360)
     ctx.stroke()
@@ -62,7 +62,7 @@ export const drawAgent = (
 }
 
 export const useAnimationFrame = (
-  agents: (Seeker | undefined)[],
+  agents: (SteeringAgent | undefined)[],
   width: number,
   height: number,
 ) => {

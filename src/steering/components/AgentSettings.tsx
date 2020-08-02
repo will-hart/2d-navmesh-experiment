@@ -1,20 +1,20 @@
 import * as React from 'react'
 
 export interface AgentSettingsProps {
-  activeRadius: number
-  setActiveRadius: (val: number) => void
   mass: number
   setMass: (val: number) => void
   maxForce: number
   setMaxForce: (val: number) => void
   maxVel: number
   setMaxVel: (val: number) => void
+  stoppingRadius: number | undefined
+  setStoppingRadius: (val: number | undefined) => void
 }
 
 const AgentSettings = ({
   title,
-  activeRadius,
-  setActiveRadius,
+  stoppingRadius,
+  setStoppingRadius,
   mass,
   setMass,
   maxForce,
@@ -77,12 +77,12 @@ const AgentSettings = ({
           type="range"
           min="10"
           max="400"
-          value={activeRadius}
+          value={stoppingRadius}
           onChange={(e) => {
-            setActiveRadius(parseInt(e.target.value, 10))
+            setStoppingRadius(parseInt(e.target.value, 10))
           }}
         />
-        {activeRadius} m
+        {stoppingRadius} m
       </div>
     </div>
   )

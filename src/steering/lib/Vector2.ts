@@ -29,6 +29,8 @@ class Vector2 implements PolyPoint {
 
   norm(): Vector2 {
     const length = this.length()
+    if (length === 0) return this
+
     this.x /= length
     this.y /= length
     return this
@@ -44,6 +46,10 @@ class Vector2 implements PolyPoint {
     const length = this.length()
     if (length <= maxLength) return this
     return this.norm().scale(maxLength)
+  }
+
+  isValid(): boolean {
+    return !(isNaN(this.x) || isNaN(this.y))
   }
 }
 
