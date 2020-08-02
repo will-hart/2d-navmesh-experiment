@@ -29,7 +29,7 @@ export const drawAgent = (
   ctx.strokeStyle = agent.colour
   ctx.lineWidth = 1
   ctx.moveTo(agent.pos.x, agent.pos.y)
-  const lineTo = agent.pos.clone().add(agent.vel.clone().scale(4))
+  const lineTo = agent.pos.clone().add(agent.vel.clone().scale(15))
   ctx.lineTo(lineTo.x, lineTo.y)
   ctx.stroke()
 
@@ -86,7 +86,7 @@ export const useAnimationFrame = (
     return () => {
       cancelAnimationFrame(animationFrame)
     }
-  }, [agents, width, height])
+  }, [agents, displayRadius, width, height])
 
   return { canvasRef, displayRadius, setDisplayRadius }
 }

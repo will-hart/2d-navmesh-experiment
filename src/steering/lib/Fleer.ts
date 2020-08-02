@@ -4,15 +4,7 @@ import Seeker, { ISteeredAgent } from './Seeker'
 class Fleer extends Seeker {
   private targetAgent?: ISteeredAgent
 
-  public constructor(
-    position: Vector2,
-    velocity: Vector2,
-    maxV: number,
-    maxF: number,
-    mass: number,
-    colour?: string,
-  ) {
-    super(position, velocity, maxV, maxF, mass, colour)
+  public initialise(): void {
     this.activeRadius = 300
   }
 

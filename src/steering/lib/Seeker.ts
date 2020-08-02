@@ -24,13 +24,19 @@ class Seeker implements ISteeredAgent {
     public maxF: number,
     public mass: number,
     public colour = 'rgb(200, 50, 50)',
-  ) {}
+  ) {
+    this.initialise()
+  }
+
+  public initialise(): void {
+    // some other classes can use this to prevent overriding the constructor
+  }
 
   public setTarget = (target: Vector2): void => {
     this.target = target
   }
 
-  public update = (): void => {
+  public update(): void {
     const rawSteer = this.getSteering()
     this.applySteeringForce(rawSteer)
     this.position.add(this.velocity)

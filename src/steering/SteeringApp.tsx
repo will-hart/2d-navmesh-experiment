@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Seeker from './lib/Seeker'
 import Fleer from './lib/Fleer'
+import Wanderer from './lib/Wanderer'
 import Vector2 from './lib/Vector2'
 
 import AgentSettings from './components/AgentSettings'
@@ -12,6 +13,17 @@ import { useAnimationFrame } from './canvasUtilities'
 export default function SteeringApp() {
   const { agent: seeker, ...seekerSettings } = useAgentSettings<Seeker>(
     new Seeker(new Vector2(50, 50), new Vector2(0, 0), 10, 3, 5),
+  )
+
+  const { agent: wanderer } = useAgentSettings<Wanderer>(
+    new Wanderer(
+      new Vector2(250, 250),
+      new Vector2(0, 0),
+      1.2,
+      5,
+      100,
+      'rgb(250, 210, 30)',
+    ),
   )
 
   const { agent: fleer, ...fleerSettings } = useAgentSettings<Fleer>(
@@ -28,7 +40,7 @@ export default function SteeringApp() {
   fleer.current.setTargetAgent(seeker.current)
 
   const { canvasRef, displayRadius, setDisplayRadius } = useAnimationFrame(
-    [seeker.current, fleer.current],
+    [seeker.current, fleer.current, wanderer.current],
     600,
     600,
   )
@@ -51,19 +63,28 @@ export default function SteeringApp() {
     if (!target) return
 
     seeker.current.setTarget(target)
-    fleer.current.setTarget(target)
   }
 
   return (
     <div className="App">
       <h1>Steering Experiments</h1>
-      <p>Click on the canvas to steer to that point</p>
+      <p
+        style={{
+          fontSize: '0.9em',
+          width: '80%',
+          margin: 'auto',
+          color: '#777',
+        }}
+      >
+        Red "seeker" - Left click to move. Green "fleer" - runs away from red
+        when nearby. Yellow "wanderer" - wanders around randomly
+      </p>
       <p>
         <input
           id="display-radius-input"
           type="checkbox"
           checked={displayRadius}
-          onClick={() => setDisplayRadius(!displayRadius)}
+          onChange={() => setDisplayRadius(!displayRadius)}
         />{' '}
         <label htmlFor="display-radius-input">Display active radius</label>
       </p>

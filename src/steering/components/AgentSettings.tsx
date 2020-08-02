@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Seeker from '../lib/Seeker'
 
 export interface AgentSettingsProps {
   activeRadius: number
