@@ -15,11 +15,12 @@ export const clearCanvas = (
 export const drawAgent = (
   ctx: CanvasRenderingContext2D,
   agent: Seeker,
-  displayRadius: boolean,
+  displayOptions: { showRadius: boolean; showTarget: boolean },
 ): void => {
-  ctx.beginPath()
+  const { showRadius, showTarget } = displayOptions
 
   // agent
+  ctx.beginPath()
   ctx.fillStyle = agent.colour
   ctx.ellipse(agent.pos.x, agent.pos.y, 5, 5, 0, 0, 360)
   ctx.fill()
@@ -34,8 +35,9 @@ export const drawAgent = (
   ctx.stroke()
 
   // active radius
-  if (displayRadius) {
+  if (showRadius) {
     ctx.beginPath()
+    ctx.lineWidth = 1
     ctx.strokeStyle = agent.colour
     ctx.ellipse(
       agent.pos.x,
@@ -48,6 +50,15 @@ export const drawAgent = (
     )
     ctx.stroke()
   }
+
+  // draw target
+  if (agent.targetPos && showTarget) {
+    ctx.beginPath()
+    ctx.strokeStyle = agent.colour
+    ctx.lineWidth = 2
+    ctx.ellipse(agent.targetPos.x, agent.targetPos.y, 5, 5, 0, 0, 360)
+    ctx.stroke()
+  }
 }
 
 export const useAnimationFrame = (
@@ -57,6 +68,7 @@ export const useAnimationFrame = (
 ) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const [displayRadius, setDisplayRadius] = React.useState(true)
+  const [displayTarget, setDisplayTarget] = React.useState(true)
 
   React.useEffect(() => {
     let animationFrame = 0
@@ -71,7 +83,10 @@ export const useAnimationFrame = (
       for (const agent of agents) {
         if (!agent) continue
         agent.update()
-        drawAgent(ctx, agent, displayRadius)
+        drawAgent(ctx, agent, {
+          showRadius: displayRadius,
+          showTarget: displayTarget,
+        })
       }
 
       loop()
@@ -86,7 +101,13 @@ export const useAnimationFrame = (
     return () => {
       cancelAnimationFrame(animationFrame)
     }
-  }, [agents, displayRadius, width, height])
+  }, [agents, displayRadius, displayTarget, width, height])
 
-  return { canvasRef, displayRadius, setDisplayRadius }
+  return {
+    canvasRef,
+    displayRadius,
+    displayTarget,
+    setDisplayRadius,
+    setDisplayTarget,
+  }
 }

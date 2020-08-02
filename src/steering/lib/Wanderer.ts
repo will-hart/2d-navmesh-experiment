@@ -7,6 +7,7 @@ class Wanderer extends Seeker {
 
   public initialise(): void {
     this.activeRadius = 15
+    this.useActiveRadiusEffects = false
   }
   protected getDesiredVelocity = (): Vector2 => {
     // determine the new wander angle
@@ -22,20 +23,8 @@ class Wanderer extends Seeker {
       Math.sin(this.currentWanderAngle),
     )
 
-    // don't wander off the 600x600 map
-    if (this.position.x < 50) {
-      wanderVec.add(new Vector2(1, 0))
-    } else if (this.position.x > 550) {
-      wanderVec.add(new Vector2(-1, 0))
-    }
-
-    if (this.position.y < 50) {
-      wanderVec.add(new Vector2(0, 1))
-    } else if (this.position.y > 550) {
-      wanderVec.add(new Vector2(0, -1))
-    }
-
-    return wanderVec.norm()
+    this.setTarget(wanderVec.add(this.position))
+    return super.getDesiredVelocity()
   }
 }
 

@@ -21,10 +21,23 @@ export default function SteeringApp() {
       new Vector2(0, 0),
       1.2,
       5,
-      100,
+      80,
       'rgb(250, 210, 30)',
     ),
   )
+
+  const { agent: pursuer } = useAgentSettings<Seeker>(
+    new Seeker(
+      new Vector2(450, 250),
+      new Vector2(0, 0),
+      1.2,
+      5,
+      80,
+      'rgb(30, 30, 210)',
+      100,
+    ),
+  )
+  pursuer.current.setTargetAgent(wanderer.current)
 
   const { agent: fleer, ...fleerSettings } = useAgentSettings<Fleer>(
     new Fleer(
@@ -39,8 +52,14 @@ export default function SteeringApp() {
 
   fleer.current.setTargetAgent(seeker.current)
 
-  const { canvasRef, displayRadius, setDisplayRadius } = useAnimationFrame(
-    [seeker.current, fleer.current, wanderer.current],
+  const {
+    canvasRef,
+    displayRadius,
+    displayTarget,
+    setDisplayRadius,
+    setDisplayTarget,
+  } = useAnimationFrame(
+    [seeker.current, fleer.current, wanderer.current, pursuer.current],
     600,
     600,
   )
@@ -87,6 +106,15 @@ export default function SteeringApp() {
           onChange={() => setDisplayRadius(!displayRadius)}
         />{' '}
         <label htmlFor="display-radius-input">Display active radius</label>
+      </p>
+      <p>
+        <input
+          id="display-target-input"
+          type="checkbox"
+          checked={displayTarget}
+          onChange={() => setDisplayTarget(!displayTarget)}
+        />{' '}
+        <label htmlFor="display-radius-input">Display agent targets</label>
       </p>
 
       <div style={{ position: 'absolute', top: 0, left: 0 }}>

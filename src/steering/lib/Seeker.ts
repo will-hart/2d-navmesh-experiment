@@ -1,5 +1,7 @@
 import Vector2 from './Vector2'
 
+const EDGE_REPULSION_FACTOR = 10
+
 export interface ISteeredAgent {
   setTarget: (target: Vector2) => void
   update: () => void
@@ -14,8 +16,14 @@ export interface ISteeredAgent {
 
 class Seeker implements ISteeredAgent {
   protected target: Vector2 | null = null
+  protected targetAgent?: ISteeredAgent
 
   public activeRadius = 100
+
+  /**
+   * 0-1, the strength of active radius effects (0 is ignore)
+   */
+  public useActiveRadiusEffects = true
 
   constructor(
     protected position: Vector2,
@@ -24,6 +32,7 @@ class Seeker implements ISteeredAgent {
     public maxF: number,
     public mass: number,
     public colour = 'rgb(200, 50, 50)',
+    public targetPredictionPeriods = 1,
   ) {
     this.initialise()
   }
@@ -32,12 +41,17 @@ class Seeker implements ISteeredAgent {
     // some other classes can use this to prevent overriding the constructor
   }
 
-  public setTarget = (target: Vector2): void => {
+  public setTarget(target: Vector2): void {
     this.target = target
+  }
+
+  public setTargetAgent(target: ISteeredAgent): void {
+    this.targetAgent = target
   }
 
   public update(): void {
     const rawSteer = this.getSteering()
+    // TODO: at some point this can go NaN. need to check/prevent this
     this.applySteeringForce(rawSteer)
     this.position.add(this.velocity)
   }
@@ -50,7 +64,11 @@ class Seeker implements ISteeredAgent {
     return this.velocity
   }
 
-  protected applySteeringForce = (steering: Vector2): void => {
+  get targetPos(): Vector2 | null {
+    return this.target
+  }
+
+  protected applySteeringForce(steering: Vector2): void {
     const steer = steering
       .clone()
       .truncate(this.maxF)
@@ -59,21 +77,63 @@ class Seeker implements ISteeredAgent {
     this.velocity.add(steer).truncate(this.maxV)
   }
 
-  protected getSteering = (): Vector2 =>
-    this.getDesiredVelocity().subtract(this.velocity)
+  protected getSteering(): Vector2 {
+    return this.getDesiredVelocity().subtract(this.velocity)
+  }
 
-  protected getDesiredVelocity = (): Vector2 => {
+  protected getDesiredVelocity(): Vector2 {
+    return (
+      this.getVelocityForAgentIntercept() || this.getVelocityForStaticTarget()
+    )
+  }
+
+  private getVelocityForAgentIntercept(): Vector2 | null {
+    const targetPos = this.targetAgent?.pos
+    if (!targetPos) return null
+
+    const targetVel =
+      this.targetPredictionPeriods > 0
+        ? this.targetAgent?.vel.clone().scale(this.targetPredictionPeriods) ||
+          new Vector2(0, 0)
+        : new Vector2(0, 0)
+
+    this.setTarget(targetPos.clone().add(targetVel))
+
+    // TODO: this works best for large prediction values, but then the pursuer can overrun
+    //       the target. Perhaps use the active radius to blend between predicting the target
+    //       position and just heading towards the target - the closer  to the target, the more
+    //       the intercept should just aim for the target
+    return this.getVelocityForStaticTarget()
+  }
+
+  protected getVelocityForStaticTarget(): Vector2 {
     if (!this.target) return new Vector2(0, 0)
 
     const delta = this.target.clone().subtract(this.position)
     const distance = delta.length()
-
     const scaleFactor =
-      distance > this.activeRadius
+      distance > this.activeRadius || !this.useActiveRadiusEffects
         ? this.maxV
         : this.maxV * (distance / this.activeRadius)
 
-    return delta.norm().scale(scaleFactor)
+    return this.applyEdgeForcesToVector(delta).norm().scale(scaleFactor)
+  }
+
+  protected applyEdgeForcesToVector(vec: Vector2): Vector2 {
+    // don't wander off the 600x600 map
+    if (this.position.x < 50) {
+      vec.add(new Vector2(EDGE_REPULSION_FACTOR, 0))
+    } else if (this.position.x > 550) {
+      vec.add(new Vector2(-EDGE_REPULSION_FACTOR, 0))
+    }
+
+    if (this.position.y < 50) {
+      vec.add(new Vector2(0, EDGE_REPULSION_FACTOR))
+    } else if (this.position.y > 550) {
+      vec.add(new Vector2(0, -EDGE_REPULSION_FACTOR))
+    }
+
+    return vec
   }
 }
 
