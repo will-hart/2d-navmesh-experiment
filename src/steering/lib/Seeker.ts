@@ -32,7 +32,7 @@ class Seeker implements ISteeredAgent {
     public maxF: number,
     public mass: number,
     public colour = 'rgb(200, 50, 50)',
-    public targetPredictionPeriods = 1,
+    public applyPursuitFactor = true,
   ) {
     this.initialise()
   }
@@ -91,18 +91,15 @@ class Seeker implements ISteeredAgent {
     const targetPos = this.targetAgent?.pos
     if (!targetPos) return null
 
-    const targetVel =
-      this.targetPredictionPeriods > 0
-        ? this.targetAgent?.vel.clone().scale(this.targetPredictionPeriods) ||
-          new Vector2(0, 0)
-        : new Vector2(0, 0)
+    const targetVel = this.applyPursuitFactor
+      ? this.targetAgent?.vel.clone().scale(
+          // predict based on distance to pursuer
+          (1.5 * this.position.clone().subtract(targetPos).length()) /
+            this.maxV,
+        ) || new Vector2(0, 0)
+      : new Vector2(0, 0)
 
     this.setTarget(targetPos.clone().add(targetVel))
-
-    // TODO: this works best for large prediction values, but then the pursuer can overrun
-    //       the target. Perhaps use the active radius to blend between predicting the target
-    //       position and just heading towards the target - the closer  to the target, the more
-    //       the intercept should just aim for the target
     return this.getVelocityForStaticTarget()
   }
 

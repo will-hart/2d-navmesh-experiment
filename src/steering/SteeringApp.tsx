@@ -30,11 +30,11 @@ export default function SteeringApp() {
     new Seeker(
       new Vector2(450, 250),
       new Vector2(0, 0),
-      1.2,
-      5,
+      1.4,
+      9,
       80,
       'rgb(30, 30, 210)',
-      100,
+      true,
     ),
   )
   pursuer.current.setTargetAgent(wanderer.current)
