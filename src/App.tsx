@@ -19,6 +19,13 @@ export default function App() {
         <Route path="/">
           <div>
             <h1>Nav mesh experiments</h1>
+            <p>
+              A few random experiments with 2D navigation on a grid.{' '}
+              <a href="https://github.com/will-hart/2d-navmesh-experiment">
+                Github Repo
+              </a>{' '}
+              | <a href="https://2d-navmesh-experiment.vercel.app/">Demo</a>
+            </p>
             <ul>
               <li>
                 <Link to="navmesh">Navmesh Generation</Link>
