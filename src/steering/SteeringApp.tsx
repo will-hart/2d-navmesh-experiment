@@ -22,7 +22,7 @@ export default function SteeringApp() {
       1.2,
       5,
       80,
-      'rgb(250, 210, 30)',
+      'goldenrod', // 'rgb(250, 210, 30)',
     ),
   )
 
@@ -95,8 +95,14 @@ export default function SteeringApp() {
           color: '#777',
         }}
       >
-        Red "seeker" - Left click to move. Green "fleer" - runs away from red
-        when nearby. Yellow "wanderer" - wanders around randomly
+        <span style={{ fontWeight: 'bold', color: 'red' }}>Red</span> "seeker" -
+        Left click to move.{' '}
+        <span style={{ fontWeight: 'bold', color: 'green' }}>Green</span>{' '}
+        "fleer" - runs away from red when nearby.{' '}
+        <span style={{ fontWeight: 'bold', color: 'goldenrod' }}>Yellow</span>{' '}
+        "wanderer" - wanders around randomly.{' '}
+        <span style={{ fontWeight: 'bold', color: 'blue' }}>Blue</span> pursues
+        yellow.
       </p>
       <p>
         <input
@@ -137,7 +143,7 @@ export default function SteeringApp() {
         ref={canvasRef}
         width="600"
         height="600"
-        style={{ width: '600px', height: '600px' }}
+        style={{ width: '600px', height: '600px', margin: 'auto' }}
       />
     </div>
   )

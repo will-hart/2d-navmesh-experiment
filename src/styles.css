@@ -1,6 +1,6 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
+html,
+body {
+  font-family: Roboto, Lato, 'Open Sans', sans-serif;
 }
 
 .button-wrapper button {
