@@ -1,60 +1,56 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
+import Seeker from './lib/Seeker'
+import Fleer from './lib/Fleer'
+import Wanderer from './lib/Wanderer'
 import Vector2 from './lib/Vector2'
 
 import AgentSettings from './components/AgentSettings'
 import useAgentSettings from './components/useAgentSettings'
 import { useAnimationFrame } from './canvasUtilities'
-import SteeringAgent from './lib/SteeringAgent'
-import { SEEK, WANDER, PURUSE, FLEE } from './lib/SteeringBehaviours'
-
-const DEFAULT_AGENT = {
-  maxV: 10,
-  maxF: 3,
-  mass: 5,
-  debugColour: 'red',
-}
 
 export default function SteeringApp() {
-  const { agent: seeker, ...seekerSettings } = useAgentSettings(
-    new SteeringAgent(
-      new Vector2(50, 50),
-      new Vector2(0, 0),
-      DEFAULT_AGENT,
-      SEEK,
-    ),
+  const { agent: seeker, ...seekerSettings } = useAgentSettings<Seeker>(
+    new Seeker(new Vector2(50, 50), new Vector2(0, 0), 10, 3, 5),
   )
 
-  const { agent: wanderer } = useAgentSettings(
-    new SteeringAgent(
+  const { agent: wanderer } = useAgentSettings<Wanderer>(
+    new Wanderer(
       new Vector2(250, 250),
       new Vector2(0, 0),
-      { ...DEFAULT_AGENT, debugColour: 'goldenrod' },
-      WANDER,
+      1.2,
+      5,
+      80,
+      'goldenrod', // 'rgb(250, 210, 30)',
     ),
   )
 
-  const { agent: pursuer } = useAgentSettings(
-    new SteeringAgent(
+  const { agent: pursuer } = useAgentSettings<Seeker>(
+    new Seeker(
       new Vector2(450, 250),
       new Vector2(0, 0),
-      { ...DEFAULT_AGENT, debugColour: 'rgb(30, 30, 210)' },
-      PURUSE,
+      1.4,
+      9,
+      80,
+      'rgb(30, 30, 210)',
+      true,
     ),
   )
-  pursuer.current.setTarget(wanderer.current.pos)
+  pursuer.current.setTargetAgent(wanderer.current)
 
-  const { agent: fleer, ...fleerSettings } = useAgentSettings(
-    new SteeringAgent(
+  const { agent: fleer, ...fleerSettings } = useAgentSettings<Fleer>(
+    new Fleer(
       new Vector2(350, 350),
       new Vector2(0, 0),
-      { ...DEFAULT_AGENT, debugColour: 'rgb(50, 200, 50)' },
-      FLEE,
+      1,
+      1,
+      100,
+      'rgb(50, 200, 50)',
     ),
   )
 
-  fleer.current.setTarget(seeker.current.pos)
+  fleer.current.setTargetAgent(seeker.current)
 
   const {
     canvasRef,
