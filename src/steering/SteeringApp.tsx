@@ -1,56 +1,57 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
-import Seeker from './lib/Seeker'
-import Fleer from './lib/Fleer'
-import Wanderer from './lib/Wanderer'
+import {
+  SeekBehaviour,
+  PursueBehaviour,
+  WanderBehaviour,
+  AvoidBoundariesBehaviour,
+  FleeBehaviour,
+  AttractorBehaviour,
+} from './lib/behaviours'
 import Vector2 from './lib/Vector2'
 
 import AgentSettings from './components/AgentSettings'
 import useAgentSettings from './components/useAgentSettings'
 import { useAnimationFrame } from './canvasUtilities'
+import SteeringAgent from './lib/SteeringAgent'
 
 export default function SteeringApp() {
-  const { agent: seeker, ...seekerSettings } = useAgentSettings<Seeker>(
-    new Seeker(new Vector2(50, 50), new Vector2(0, 0), 10, 3, 5),
-  )
+  // red click seeker
+  let agent = new SteeringAgent(new Vector2(50, 50), [new SeekBehaviour()])
+  agent.maxV = 1.2 * agent.maxV
+  const { agent: seeker, ...seekerSettings } = useAgentSettings(agent)
 
-  const { agent: wanderer } = useAgentSettings<Wanderer>(
-    new Wanderer(
-      new Vector2(250, 250),
-      new Vector2(0, 0),
-      1.2,
-      5,
-      80,
-      'goldenrod', // 'rgb(250, 210, 30)',
-    ),
+  // yellow wanderer
+  const { agent: wanderer } = useAgentSettings(
+    new SteeringAgent(new Vector2(250, 250), [
+      new WanderBehaviour(0.4),
+      new AttractorBehaviour(300, 300, 300, 0.9),
+      new AvoidBoundariesBehaviour(600, 600, 5, 8),
+    ]),
   )
+  wanderer.current.debugColor = 'goldenrod'
 
-  const { agent: pursuer } = useAgentSettings<Seeker>(
-    new Seeker(
-      new Vector2(450, 250),
-      new Vector2(0, 0),
-      1.4,
-      9,
-      80,
-      'rgb(30, 30, 210)',
-      true,
-    ),
-  )
-  pursuer.current.setTargetAgent(wanderer.current)
+  // Blue pursuer
+  agent = new SteeringAgent(new Vector2(450, 250), [
+    new PursueBehaviour(0.5),
+    new AvoidBoundariesBehaviour(600, 600, 20, 3),
+  ])
+  agent.effectRadius = 350
+  agent.debugColor = 'rgb(30, 30, 210)'
+  agent.targetAgent = wanderer.current
+  agent.maxV *= 0.5
+  const { agent: pursuer } = useAgentSettings(agent)
 
-  const { agent: fleer, ...fleerSettings } = useAgentSettings<Fleer>(
-    new Fleer(
-      new Vector2(350, 350),
-      new Vector2(0, 0),
-      1,
-      1,
-      100,
-      'rgb(50, 200, 50)',
-    ),
-  )
-
-  fleer.current.setTargetAgent(seeker.current)
+  // green fleer
+  agent = new SteeringAgent(new Vector2(350, 350), [
+    new FleeBehaviour(),
+    new AvoidBoundariesBehaviour(600, 600, 20, 3),
+  ])
+  agent.debugColor = 'rgb(50, 200, 50)'
+  agent.effectRadius = 200
+  agent.targetAgent = seeker.current
+  const { agent: fleer, ...fleerSettings } = useAgentSettings(agent)
 
   const {
     canvasRef,
@@ -81,7 +82,7 @@ export default function SteeringApp() {
     const target = getClickedPoint(e)
     if (!target) return
 
-    seeker.current.setTarget(target)
+    seeker.current.target = { position: target }
   }
 
   return (
@@ -120,7 +121,7 @@ export default function SteeringApp() {
           checked={displayTarget}
           onChange={() => setDisplayTarget(!displayTarget)}
         />{' '}
-        <label htmlFor="display-radius-input">Display agent targets</label>
+        <label htmlFor="display-target-input">Display agent targets</label>
       </p>
 
       <div style={{ position: 'absolute', top: 0, left: 0 }}>

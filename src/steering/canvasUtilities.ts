@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Seeker from './lib/Seeker'
+import SteeringAgent from './lib/SteeringAgent'
 
 export const clearCanvas = (
   ctx: CanvasRenderingContext2D,
@@ -14,23 +14,23 @@ export const clearCanvas = (
 
 export const drawAgent = (
   ctx: CanvasRenderingContext2D,
-  agent: Seeker,
+  agent: SteeringAgent,
   displayOptions: { showRadius: boolean; showTarget: boolean },
 ): void => {
   const { showRadius, showTarget } = displayOptions
 
   // agent
   ctx.beginPath()
-  ctx.fillStyle = agent.colour
-  ctx.ellipse(agent.pos.x, agent.pos.y, 5, 5, 0, 0, 360)
+  ctx.fillStyle = agent.debugColor
+  ctx.ellipse(agent.position.x, agent.position.y, 2, 2, 0, 0, 360)
   ctx.fill()
 
   // velocity vector
   ctx.beginPath()
-  ctx.strokeStyle = agent.colour
+  ctx.strokeStyle = agent.debugColor
   ctx.lineWidth = 1
-  ctx.moveTo(agent.pos.x, agent.pos.y)
-  const lineTo = agent.pos.clone().add(agent.vel.clone().scale(15))
+  ctx.moveTo(agent.position.x, agent.position.y)
+  const lineTo = agent.position.clone().add(agent.velocity.clone().scale(15))
   ctx.lineTo(lineTo.x, lineTo.y)
   ctx.stroke()
 
@@ -38,31 +38,57 @@ export const drawAgent = (
   if (showRadius) {
     ctx.beginPath()
     ctx.lineWidth = 1
-    ctx.strokeStyle = agent.colour
+    ctx.strokeStyle = agent.debugColor
     ctx.ellipse(
-      agent.pos.x,
-      agent.pos.y,
-      agent.activeRadius,
-      agent.activeRadius,
+      agent.position.x,
+      agent.position.y,
+      agent.stoppingRadius,
+      agent.stoppingRadius,
+      0,
+      0,
+      360,
+    )
+    ctx.stroke()
+
+    if (agent.effectRadius) {
+      ctx.beginPath()
+      ctx.setLineDash([5, 3])
+      ctx.lineWidth = 1
+      ctx.strokeStyle = agent.debugColor
+      ctx.ellipse(
+        agent.position.x,
+        agent.position.y,
+        agent.effectRadius,
+        agent.effectRadius,
+        0,
+        0,
+        360,
+      )
+      ctx.stroke()
+      ctx.setLineDash([])
+    }
+  }
+
+  // draw target
+  if (agent.target && showTarget) {
+    ctx.beginPath()
+    ctx.strokeStyle = agent.debugColor
+    ctx.lineWidth = 2
+    ctx.ellipse(
+      agent.target.position.x,
+      agent.target.position.y,
+      5,
+      5,
       0,
       0,
       360,
     )
     ctx.stroke()
   }
-
-  // draw target
-  if (agent.targetPos && showTarget) {
-    ctx.beginPath()
-    ctx.strokeStyle = agent.colour
-    ctx.lineWidth = 2
-    ctx.ellipse(agent.targetPos.x, agent.targetPos.y, 5, 5, 0, 0, 360)
-    ctx.stroke()
-  }
 }
 
 export const useAnimationFrame = (
-  agents: (Seeker | undefined)[],
+  agents: (SteeringAgent | undefined)[],
   width: number,
   height: number,
 ) => {

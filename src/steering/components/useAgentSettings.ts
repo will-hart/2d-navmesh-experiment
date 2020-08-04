@@ -1,16 +1,19 @@
 import * as React from 'react'
-import { ISteeredAgent } from '../lib/Seeker'
+import SteeringAgent from '../lib/SteeringAgent'
 import { AgentSettingsProps } from './AgentSettings'
 
-const useAgent = <T extends ISteeredAgent>(
-  initialAgent: T,
-): AgentSettingsProps & { agent: React.MutableRefObject<T> } => {
-  const agent = React.useRef<T>(initialAgent)
+const useAgent = (
+  initialAgent: SteeringAgent,
+): AgentSettingsProps & { agent: React.MutableRefObject<SteeringAgent> } => {
+  const agent = React.useRef<SteeringAgent>(initialAgent)
   const [mass, _setMass] = React.useState(agent.current.mass)
   const [maxForce, _setMaxForce] = React.useState(agent.current.maxF)
   const [maxVel, _setMaxVel] = React.useState(agent.current.maxV)
-  const [activeRadius, _setactiveRadius] = React.useState(
-    agent.current.activeRadius,
+  const [effectRadius, _setEffectRadius] = React.useState(
+    agent.current.effectRadius,
+  )
+  const [stoppingRadius, _setStoppingRadius] = React.useState(
+    agent.current.stoppingRadius,
   )
 
   const setMass = (mass: number) => {
@@ -25,20 +28,26 @@ const useAgent = <T extends ISteeredAgent>(
     _setMaxVel(maxVel)
     agent.current.maxV = maxVel
   }
-  const setActiveRadius = (activeRadius: number) => {
-    _setactiveRadius(activeRadius)
-    agent.current.activeRadius = activeRadius
+  const setEffectRadius = (effectRadius: number) => {
+    _setEffectRadius(effectRadius)
+    agent.current.effectRadius = effectRadius
+  }
+  const setStoppingRadius = (stoppingRadius: number) => {
+    _setStoppingRadius(stoppingRadius)
+    agent.current.stoppingRadius = stoppingRadius
   }
 
   return {
     mass,
-    activeRadius,
-    setActiveRadius,
+    effectRadius,
+    setEffectRadius,
     setMass,
     maxForce,
     setMaxForce,
     maxVel,
     setMaxVel,
+    stoppingRadius,
+    setStoppingRadius,
     agent,
   }
 }

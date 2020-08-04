@@ -7,6 +7,16 @@ class Vector2 implements PolyPoint {
     return new Vector2(this.x, this.y)
   }
 
+  addX(x: number): Vector2 {
+    this.x += x
+    return this
+  }
+
+  addY(y: number): Vector2 {
+    this.y += y
+    return this
+  }
+
   add(other: Vector2): Vector2 {
     this.x += other.x
     this.y += other.y
@@ -19,6 +29,10 @@ class Vector2 implements PolyPoint {
     return this
   }
 
+  isValid(): boolean {
+    return !(isNaN(this.x) || isNaN(this.y))
+  }
+
   length(): number {
     return Math.sqrt(this.lengthSqr())
   }
@@ -29,6 +43,8 @@ class Vector2 implements PolyPoint {
 
   norm(): Vector2 {
     const length = this.length()
+    if (length === 0) return this
+
     this.x /= length
     this.y /= length
     return this
